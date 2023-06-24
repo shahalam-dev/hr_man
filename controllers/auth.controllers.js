@@ -64,7 +64,7 @@ const logIn = (req, res, next) => {
     try {
       const user = await models.Auth.findOne({ where: { email } });
       const isValidPassword = await bcrypt.compare(pass, user.password);
-      const { id, role, verified } = user;
+      const { id, role, verified, full_name } = user;
       if (user) {
         if (verified === "true") {
           if (isValidPassword) {
@@ -82,9 +82,14 @@ const logIn = (req, res, next) => {
               maxAge: 1000 * 60 * 60,
               httpOnly: true,
             });
+            const userInfo = {
+              user_id: user.id,
+              name: user.full_name || "",
+            };
+
             return res.status(200).json({
               message: "success",
-              user_id: user.id,
+              user: userInfo,
             });
           } else {
             return res.status(400).json({
