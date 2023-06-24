@@ -14,7 +14,7 @@ const {
 router.post("/register", signUp);
 router.post("/login", logIn);
 router.get("/verify_email/:token", verifyEmail);
-router.post("/forgot_password", forgotPassword);
+router.get("/forgot_password/:email", forgotPassword);
 router.post("/reset_password", resetPassword);
 
 module.exports = router;

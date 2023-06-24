@@ -10,8 +10,6 @@ const jwtSecret = process.env.JWT_SECRET;
 const sequelize = require("sequelize");
 
 const signUp = (req, res, next) => {
-  //   const { user_cell_number, user_password: pass } = req.body;
-  // const generatedOpt = Math.floor(1000 + Math.random() * 9000);
   const run = async () => {
     try {
       const { full_name, email, password: pass } = req.body;
@@ -27,11 +25,11 @@ const signUp = (req, res, next) => {
       const isExist = await models.Auth.findOne({ where: { email: email } });
       if (!isExist) {
         const user = await models.Auth.create(userData);
-        console.log("\nJane:", user.toJSON());
+        // console.log("\nUser:", user.toJSON());
 
         const { token, generateLink } = await generateOtpLink(
           email,
-          "auth/verify-email/"
+          `${process.env.SERVER_URL}/verify_email/`
         );
 
         user.token = token;
@@ -107,11 +105,12 @@ const logIn = (req, res, next) => {
 
 const forgotPassword = (req, res, next) => {
   // const { email: reqEmail } = req.body;
+  const { email } = req.params;
 
   const run = async () => {
     try {
-      const user = await models.User.findOne({
-        where: { email: reqEmail },
+      const user = await models.Auth.findOne({
+        where: { email: email },
       });
 
       if (!user) {
@@ -120,8 +119,8 @@ const forgotPassword = (req, res, next) => {
         });
       } else {
         const { token, generateLink } = await generateOtpLink(
-          reqEmail,
-          "auth/reset-password/"
+          email,
+          `${process.env.CLIENT_URL}/auth/resetPassword/`
         );
         const userMail = user.email;
         user.token = token;
@@ -171,7 +170,6 @@ const resetPassword = (req, res, next) => {
 };
 
 const verifyEmail = (req, res, next) => {
-  // const { token } = req.body;
   const { token } = req.params;
 
   const run = async () => {
@@ -190,11 +188,9 @@ const verifyEmail = (req, res, next) => {
         const { token } = user;
         const { sixDigitOTP: savedOTP } = jwt.verify(token, jwtSecret).data;
         if (savedOTP === sixDigitOTP) {
-          user.isVerified = true;
+          user.verified = true;
           await user.save();
-          return res.status(200).json({
-            message: "success",
-          });
+          return res.redirect(`${process.env.CLIENT_URL}`);
         } else {
           return res.status(401).json({
             message: "invalid token",
@@ -280,7 +276,7 @@ async function generateOtpLink(email, directory) {
     },
     jwtSecret
   );
-  const generateLink = `${process.env.CLIENT_URL}${directory}${token}`;
+  const generateLink = `${directory}${token}`;
 
   return {
     token,
