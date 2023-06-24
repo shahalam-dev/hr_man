@@ -20,7 +20,7 @@ const signUp = (req, res, next) => {
         full_name,
         email,
         password,
-        verified: "yes",
+        verified: "false",
         role: 1001,
         account_status: "active",
       };
@@ -191,7 +191,7 @@ const verifyEmail = (req, res, next) => {
         const { token } = user;
         const { sixDigitOTP: savedOTP } = jwt.verify(token, jwtSecret).data;
         if (savedOTP === sixDigitOTP) {
-          user.verified = true;
+          user.verified = "true";
           await user.save();
           return res.redirect(`${process.env.CLIENT_URL}`);
         } else {
