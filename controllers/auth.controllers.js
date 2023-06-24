@@ -64,30 +64,36 @@ const logIn = (req, res, next) => {
     try {
       const user = await models.Auth.findOne({ where: { email } });
       const isValidPassword = await bcrypt.compare(pass, user.password);
-      const { id, role } = user;
+      const { id, role, verified } = user;
       if (user) {
-        if (isValidPassword) {
-          const token = jwt.sign(
-            {
-              exp: Math.floor(Date.now() / 1000) + 60 * 60,
-              data: {
-                id,
-                role,
+        if (verified === "true") {
+          if (isValidPassword) {
+            const token = jwt.sign(
+              {
+                exp: Math.floor(Date.now() / 1000) + 60 * 60,
+                data: {
+                  id,
+                  role,
+                },
               },
-            },
-            jwtSecret
-          );
-          res.cookie("auth", token, {
-            maxAge: 1000 * 60 * 60,
-            httpOnly: true,
-          });
-          return res.status(200).json({
-            message: "success",
-            user_id: user.id,
-          });
+              jwtSecret
+            );
+            res.cookie("auth", token, {
+              maxAge: 1000 * 60 * 60,
+              httpOnly: true,
+            });
+            return res.status(200).json({
+              message: "success",
+              user_id: user.id,
+            });
+          } else {
+            return res.status(400).json({
+              message: "Incorrect password",
+            });
+          }
         } else {
-          return res.status(400).json({
-            message: "Incorrect password",
+          return res.status(401).json({
+            message: "Email is not verified",
           });
         }
       } else {
