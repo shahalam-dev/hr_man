@@ -213,11 +213,23 @@ const verifyEmail = (req, res, next) => {
   run();
 };
 
+const logOut = (req, res, next) => {
+  const run = async () => {
+    try {
+      res.cookie("auth", null);
+    } catch (error) {
+      return next(error);
+    }
+  };
+  run();
+};
+
 exports.signUp = signUp;
 exports.logIn = logIn;
 exports.forgotPassword = forgotPassword;
 exports.resetPassword = resetPassword;
 exports.verifyEmail = verifyEmail;
+exports.logOut = logOut;
 
 async function sendMail(data) {
   const config = {
