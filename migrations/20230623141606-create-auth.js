@@ -19,7 +19,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       verified: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.STRING,
       },
       account_status: {
         type: Sequelize.STRING,

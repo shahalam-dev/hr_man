@@ -20,6 +20,9 @@ const signUp = (req, res, next) => {
         full_name,
         email,
         password,
+        verified: "yes",
+        role: 1001,
+        account_status: "active",
       };
 
       const isExist = await models.Auth.findOne({ where: { email: email } });
