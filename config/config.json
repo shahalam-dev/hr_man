@@ -20,10 +20,15 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "shahalam-dev",
+    "password": "Eu5VmjJNhvY9",
+    "database": "hr",
+    "host": "ep-shrill-water-355234-pooler.us-east-2.aws.neon.tech",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "rejectUnauthorized": true
+      }
+    }
   }
 }
