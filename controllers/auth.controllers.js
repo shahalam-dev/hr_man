@@ -157,7 +157,7 @@ const resetPassword = (req, res, next) => {
   const run = async () => {
     try {
       const { email: userEmail, sixDigitOTP } = await decodeJWT(reqToken);
-      const user = await models.User.findOne({
+      const user = await models.Auth.findOne({
         where: { email: userEmail },
       });
       if (!user) {
