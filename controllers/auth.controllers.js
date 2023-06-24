@@ -92,7 +92,7 @@ const logIn = (req, res, next) => {
               user: userInfo,
             });
           } else {
-            return res.status(400).json({
+            return res.status(403).json({
               message: "Incorrect password",
             });
           }
