@@ -92,7 +92,7 @@ const logIn = (req, res, next) => {
             });
           }
         } else {
-          return res.status(401).json({
+          return res.status(403).json({
             message: "Email is not verified",
           });
         }
