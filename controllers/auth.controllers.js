@@ -24,21 +24,28 @@ const signUp = (req, res, next) => {
         password,
       };
 
-      const user = await models.Auth.create(userData);
-      console.log("\nJane:", user.toJSON());
+      const isExist = await models.Auth.findOne({ where: { email: email } });
+      if (!isExist) {
+        const user = await models.Auth.create(userData);
+        console.log("\nJane:", user.toJSON());
 
-      const { token, generateLink } = await generateOtpLink(
-        email,
-        "auth/verify-email/"
-      );
+        const { token, generateLink } = await generateOtpLink(
+          email,
+          "auth/verify-email/"
+        );
 
-      user.token = token;
-      await user.save();
-      await sendMail({ email, generateLink });
+        user.token = token;
+        await user.save();
+        await sendMail({ email, generateLink });
 
-      res.status(201).json({
-        message: "User successfully created",
-      });
+        res.status(201).json({
+          message: "User successfully created",
+        });
+      } else {
+        res.status(406).json({
+          message: "Email already exist",
+        });
+      }
     } catch (error) {
       // res.status(400).json({
       //   message: error.message,
