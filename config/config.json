@@ -1,0 +1,29 @@
+{
+  "development": {
+    "username": "8sjuq92ol4l6njwsi4az",
+    "password": "pscale_pw_JV6JkrGPxgYiRKAcRAlg6IiHzCuUZkb1dOkZpv1TQVO",
+    "database": "hr_man",
+    "host": "aws.connect.psdb.cloud",
+    "dialect": "mysql",
+    "logging": true,
+    "dialectOptions": {
+      "ssl": {
+        "rejectUnauthorized": true
+      }
+    }
+  },
+  "test": {
+    "username": "root",
+    "password": "admin",
+    "database": "hr_man",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
