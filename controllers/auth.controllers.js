@@ -209,14 +209,12 @@ const verifyEmail = (req, res, next) => {
         if (savedOTP === sixDigitOTP) {
           user.verified = "true";
           await user.save();
-          res
-            .status(200)
-            .json({
-              statusText: "email verification successful",
-            })
-            .redirect(
-              `${process.env.CLIENT_URL}/auth/email_verify_confirm/${user.email}`
-            );
+          res.status(200).json({
+            statusText: "email verification successful",
+          });
+          res.redirect(
+            `${process.env.CLIENT_URL}/auth/email_verify_confirm/${user.email}`
+          );
         } else {
           return res.status(401).json({
             message: "invalid token",
