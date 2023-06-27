@@ -1,4 +1,4 @@
-exports.register = () => {
+exports.resetPassword = () => {
   return Object.freeze({
     execute: async () => {},
   });
