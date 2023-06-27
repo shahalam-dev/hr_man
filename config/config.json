@@ -14,10 +14,10 @@
   },
   "test": {
     "username": "root",
-    "password": "admin",
+    "password": "Test@2023#",
     "database": "hr_man",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "host": "125.253.21.201",
+    "dialect": "mariadb"
   },
   "production": {
     "username": "shahalam-dev",
@@ -25,6 +25,7 @@
     "database": "hr",
     "host": "ep-shrill-water-355234-pooler.us-east-2.aws.neon.tech",
     "dialect": "postgres",
+    "logging": false,
     "dialectOptions": {
       "ssl": {
         "rejectUnauthorized": true

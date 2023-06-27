@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 const { where } = require("sequelize");
 const jwtSecret = process.env.JWT_SECRET;
 const sequelize = require("sequelize");
+const createError = require("http-errors");
 
 const signUp = (req, res, next) => {
   const run = async () => {
@@ -134,7 +135,7 @@ const forgotPassword = (req, res, next) => {
       } else {
         const { token, generateLink } = await generateOtpLink(
           email,
-          `${process.env.CLIENT_URL}/auth/resetPassword/`
+          `${process.env.CLIENT_URL}/resetPassword/`
         );
         const userMail = user.email;
         user.token = token;
@@ -177,7 +178,15 @@ const resetPassword = (req, res, next) => {
         }
       }
     } catch (error) {
-      return next(error);
+      console.log(
+        "🚀 ~ file: auth.controllers.js:180 ~ run ~ error:",
+        error.name
+      );
+      if (error.name === "TokenExpiredError") {
+        return res.status(503).send("Your session has expired");
+      } else {
+        return next(error);
+      }
     }
   };
   run();
@@ -204,7 +213,9 @@ const verifyEmail = (req, res, next) => {
         if (savedOTP === sixDigitOTP) {
           user.verified = "true";
           await user.save();
-          return res.redirect(`${process.env.CLIENT_URL}`);
+          return res.redirect(
+            `${process.env.CLIENT_URL}/auth/email_verify_confirm/${user.email}`
+          );
         } else {
           return res.status(401).json({
             message: "invalid token",

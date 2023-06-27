@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const path = require("path");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
 
 // const middlewares = require("./middlewares");
 
@@ -17,6 +18,7 @@ app.use(
     origin: "http://localhost:3000",
   })
 );
+app.use(morgan("combined"));
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
