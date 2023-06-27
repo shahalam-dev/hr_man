@@ -13,11 +13,7 @@ const morgan = require("morgan");
 const routes = require("./routes");
 
 const app = express();
-app.use(
-  cors({
-    origin: "https://dashboard-73066afik-delower68.vercel.app",
-  })
-);
+app.use(cors());
 app.use(morgan("combined"));
 app.use(helmet());
 app.use(bodyParser.json());
