@@ -178,10 +178,6 @@ const resetPassword = (req, res, next) => {
         }
       }
     } catch (error) {
-      console.log(
-        "🚀 ~ file: auth.controllers.js:180 ~ run ~ error:",
-        error.name
-      );
       if (error.name === "TokenExpiredError") {
         return res.status(503).send("Your session has expired");
       } else {
@@ -213,9 +209,14 @@ const verifyEmail = (req, res, next) => {
         if (savedOTP === sixDigitOTP) {
           user.verified = "true";
           await user.save();
-          return res.redirect(
-            `${process.env.CLIENT_URL}/auth/email_verify_confirm/${user.email}`
-          );
+          res
+            .status(200)
+            .json({
+              statusText: "email verification successful",
+            })
+            .redirect(
+              `${process.env.CLIENT_URL}/auth/email_verify_confirm/${user.email}`
+            );
         } else {
           return res.status(401).json({
             message: "invalid token",
@@ -223,7 +224,11 @@ const verifyEmail = (req, res, next) => {
         }
       }
     } catch (error) {
-      return next(error);
+      if (error.name === "TokenExpiredError") {
+        return res.status(503).send("Your session has expired");
+      } else {
+        return next(error);
+      }
     }
   };
   run();
