@@ -232,7 +232,11 @@ const verifyEmail = (req, res, next) => {
 const logOut = (req, res, next) => {
   const run = async () => {
     try {
-      res.cookie("auth", null);
+      res.clearCookie("auth");
+      res.status(200).json({
+        statusText: "logout successful",
+      });
+      res.redirect(`${process.env.CLIENT_URL}/auth/login`);
     } catch (error) {
       return next(error);
     }
