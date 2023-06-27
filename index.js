@@ -15,7 +15,10 @@ const routes = require("./routes");
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "https://dashboard-73066afik-delower68.vercel.app",
+    ],
   })
 );
 app.use(morgan("combined"));
