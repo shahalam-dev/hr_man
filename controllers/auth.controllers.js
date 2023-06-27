@@ -33,7 +33,7 @@ const signUp = (req, res, next) => {
 
         const { token, generateLink } = await generateOtpLink(
           email,
-          `${process.env.SERVER_URL}/auth/verify_email/`
+          `${process.env.SERVER_URL}/verify_email/`
         );
 
         user.token = token;
