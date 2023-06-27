@@ -33,7 +33,7 @@ const signUp = (req, res, next) => {
 
         const { token, generateLink } = await generateOtpLink(
           email,
-          `${process.env.SERVER_URL}/verify_email/`
+          `${process.env.SERVER_URL}/auth/verify_email/`
         );
 
         user.token = token;
@@ -135,7 +135,7 @@ const forgotPassword = (req, res, next) => {
       } else {
         const { token, generateLink } = await generateOtpLink(
           email,
-          `${process.env.CLIENT_URL}/resetPassword/`
+          `${process.env.CLIENT_URL}/auth/resetPassword/`
         );
         const userMail = user.email;
         user.token = token;
