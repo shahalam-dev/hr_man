@@ -3,16 +3,24 @@ const nodemailer = require("nodemailer");
 const Mailgen = require("mailgen");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const models = require("../lib/database/models").models;
+const models = require("../database/models").models;
 const { v4: uuidv4 } = require("uuid");
 const { where } = require("sequelize");
 const jwtSecret = process.env.JWT_SECRET;
 const sequelize = require("sequelize");
 const createError = require("http-errors");
+const { validationResult } = require("express-validator");
 
 const signUp = (req, res, next) => {
   const run = async () => {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          statusText: "validation error",
+          data: errors.array(),
+        });
+      }
       const { full_name, email, password: pass } = req.body;
       const password = await bcrypt.hash(pass, 10);
       const generatedId = await uuidv4();

@@ -1,5 +1,5 @@
 const dotenv = require("dotenv").config();
-const database = require("./lib/database/index").database;
+const database = require("./database/index").database;
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");

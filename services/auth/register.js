@@ -1,5 +1,7 @@
-exports.register = () => {
+exports.register = ({request}) => {
   return Object.freeze({
-    execute: async () => {},
+    execute: async () => {
+      
+    },
   });
 };
