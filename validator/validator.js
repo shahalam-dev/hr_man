@@ -7,6 +7,8 @@ exports.validate = (method) => {
       return [
         body("full_name").exists().withMessage("name is required"),
         body("email")
+          .exists()
+          .withMessage("email is required")
           .isEmail()
           .withMessage("Invalid email")
           .custom(async (value) => {

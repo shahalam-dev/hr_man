@@ -10,6 +10,7 @@ const jwtSecret = process.env.JWT_SECRET;
 const sequelize = require("sequelize");
 const createError = require("http-errors");
 const { validationResult } = require("express-validator");
+const generateOtpLink = require("../utils/otp-link").otpLink;
 
 const signUp = (req, res, next) => {
   const run = async () => {
@@ -37,7 +38,6 @@ const signUp = (req, res, next) => {
       const isExist = await models.Auth.findOne({ where: { email: email } });
       if (!isExist) {
         const user = await models.Auth.create(userData);
-        // console.log("\nUser:", user.toJSON());
 
         const { token, generateLink } = await generateOtpLink(
           email,
@@ -309,25 +309,25 @@ async function sendMail(data) {
 //   );
 // }
 
-async function generateOtpLink(email, directory) {
-  const sixDigitOTP = Math.floor(100000 + Math.random() * 900000);
-  const token = jwt.sign(
-    {
-      exp: Math.floor(Date.now() / 1000) + 60 * 10,
-      data: {
-        email,
-        sixDigitOTP,
-      },
-    },
-    jwtSecret
-  );
-  const generateLink = `${directory}${token}`;
+// async function generateOtpLink(email, directory) {
+//   const sixDigitOTP = Math.floor(100000 + Math.random() * 900000);
+//   const token = jwt.sign(
+//     {
+//       exp: Math.floor(Date.now() / 1000) + 60 * 10,
+//       data: {
+//         email,
+//         sixDigitOTP,
+//       },
+//     },
+//     jwtSecret
+//   );
+//   const generateLink = `${directory}${token}`;
 
-  return {
-    token,
-    generateLink,
-  };
-}
+//   return {
+//     token,
+//     generateLink,
+//   };
+// }
 
 async function decodeJWT(token) {
   const { data } = jwt.verify(token, jwtSecret);
