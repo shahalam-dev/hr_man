@@ -1,59 +1,38 @@
 // const authControllers = require("../controllers/auth.controllers");
-const nodemailer = require("nodemailer");
-const Mailgen = require("mailgen");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const models = require("../lib/database/models").models;
+const fromServices = require("../services/auth").authServices;
+
+const models = require("../database/models").models;
 const { v4: uuidv4 } = require("uuid");
 const { where } = require("sequelize");
 const jwtSecret = process.env.JWT_SECRET;
 const sequelize = require("sequelize");
 const createError = require("http-errors");
+const generateOtpLink = require("../utils/otp-link").otpLink;
+const decodeJWT = require("../utils/decode-jwt").decodeJWT;
+const sendMail = require("../utils/send-mail").sendMail;
+const { validationResult } = require("express-validator");
+const { logger } = require("../utils/logger");
 
 const signUp = (req, res, next) => {
   const run = async () => {
     try {
-      const { full_name, email, password: pass } = req.body;
-      const password = await bcrypt.hash(pass, 10);
-      const generatedId = await uuidv4();
-      const userData = {
-        id: generatedId,
-        full_name,
-        email,
-        password,
-        verified: "false",
-        role: 1001,
-        account_status: "active",
-      };
-
-      const isExist = await models.Auth.findOne({ where: { email: email } });
-      if (!isExist) {
-        const user = await models.Auth.create(userData);
-        // console.log("\nUser:", user.toJSON());
-
-        const { token, generateLink } = await generateOtpLink(
-          email,
-          `${process.env.SERVER_URL}/verify_email/`
-        );
-
-        user.token = token;
-        await user.save();
-        await sendMail({ email, generateLink });
-
-        res.status(201).json({
-          message: "User successfully created",
-        });
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const err = errors.mapped();
+        return next(createError.NotAcceptable(err));
       } else {
-        res.status(406).json({
-          message: "Email already exist",
+        const result = (await fromServices.Register(req, res, next)).execute();
+        res.status(201).json({
+          message: result.message,
+          data: result.data,
         });
       }
     } catch (error) {
-      // res.status(400).json({
-      //   message: error.message,
-      // });
-      // console.log(error);
-      return next(error);
+      logger.log("error", {
+        message: error.message,
+        errorStack: error.stack,
+      });
+      next(error);
     }
   };
   run();
@@ -109,9 +88,10 @@ const logIn = (req, res, next) => {
       }
       const isValidPass = await bcrypt.compare(pass, user.password);
     } catch (error) {
-      // res.status(400).json({
-      //   message: "Incorrect email or password",
-      // });
+      logger.log("error", {
+        message: error.message,
+        errorStack: error.stack,
+      });
       return next(error);
     }
   };
@@ -146,6 +126,10 @@ const forgotPassword = (req, res, next) => {
         });
       }
     } catch (error) {
+      logger.log("error", {
+        message: error.message,
+        errorStack: error.stack,
+      });
       return next(error);
     }
   };
@@ -181,6 +165,10 @@ const resetPassword = (req, res, next) => {
       if (error.name === "TokenExpiredError") {
         return res.status(503).send("Your session has expired");
       } else {
+        logger.log("error", {
+          message: error.message,
+          errorStack: error.stack,
+        });
         return next(error);
       }
     }
@@ -225,6 +213,10 @@ const verifyEmail = (req, res, next) => {
       if (error.name === "TokenExpiredError") {
         return res.status(503).send("Your session has expired");
       } else {
+        logger.log("error", {
+          message: error.message,
+          errorStack: error.stack,
+        });
         return next(error);
       }
     }
@@ -241,6 +233,10 @@ const logOut = (req, res, next) => {
       });
       res.redirect(`${process.env.CLIENT_URL}/auth/login`);
     } catch (error) {
+      logger.log("error", {
+        message: error.message,
+        errorStack: error.stack,
+      });
       return next(error);
     }
   };
@@ -253,82 +249,3 @@ exports.forgotPassword = forgotPassword;
 exports.resetPassword = resetPassword;
 exports.verifyEmail = verifyEmail;
 exports.logOut = logOut;
-
-async function sendMail(data) {
-  const config = {
-    service: "gmail",
-    auth: {
-      user: "shahalamsharif2015@gmail.com",
-      pass: "gljdnvygtwdnaudg",
-    },
-  };
-
-  const transporter = nodemailer.createTransport(config);
-
-  const MailGenerator = new Mailgen({
-    theme: "default",
-    product: {
-      name: "Mailgen",
-      link: "https://mailgen.js/",
-    },
-  });
-
-  const response = {
-    body: {
-      name: "OTP verification",
-      intro: "Your OTP verification mail",
-      table: {
-        data: [
-          {
-            msg: `Your OTP is ${data.generateLink}`,
-          },
-        ],
-      },
-      outrow: "Thanks for being with us",
-    },
-  };
-
-  const mail = MailGenerator.generate(response);
-
-  const message = {
-    from: "shahalamsharif2015@gmail.com",
-    to: data.email,
-    subject: "testing",
-    html: mail,
-  };
-
-  transporter.sendMail(message);
-}
-
-// async function updateUserData(data) {
-
-//   const res = await models.User.update(
-//     ,
-//     { where: { email: { userEmail } } }
-//   );
-// }
-
-async function generateOtpLink(email, directory) {
-  const sixDigitOTP = Math.floor(100000 + Math.random() * 900000);
-  const token = jwt.sign(
-    {
-      exp: Math.floor(Date.now() / 1000) + 60 * 10,
-      data: {
-        email,
-        sixDigitOTP,
-      },
-    },
-    jwtSecret
-  );
-  const generateLink = `${directory}${token}`;
-
-  return {
-    token,
-    generateLink,
-  };
-}
-
-async function decodeJWT(token) {
-  const { data } = jwt.verify(token, jwtSecret);
-  return data;
-}

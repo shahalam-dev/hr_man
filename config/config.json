@@ -1,16 +1,11 @@
 {
   "development": {
-    "username": "8sjuq92ol4l6njwsi4az",
-    "password": "pscale_pw_JV6JkrGPxgYiRKAcRAlg6IiHzCuUZkb1dOkZpv1TQVO",
+    "username": "root",
+    "password": "admin",
     "database": "hr_man",
-    "host": "aws.connect.psdb.cloud",
+    "host": "127.0.0.1",
     "dialect": "mysql",
-    "logging": true,
-    "dialectOptions": {
-      "ssl": {
-        "rejectUnauthorized": true
-      }
-    }
+    "logging": false
   },
   "test": {
     "username": "root",

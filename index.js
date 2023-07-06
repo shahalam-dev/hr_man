@@ -1,5 +1,5 @@
 const dotenv = require("dotenv").config();
-const database = require("./lib/database/index").database;
+const database = require("./database/index").database;
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -7,10 +7,12 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
+const createError = require("http-errors");
 
 // const middlewares = require("./middlewares");
 
 const routes = require("./routes");
+const { logger } = require("./utils/logger");
 
 const app = express();
 app.use(cors());
@@ -20,32 +22,34 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use((err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || "error";
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message,
-  });
-});
 console.log(
   `******** Application started in ${process.env.NODE_ENV} mode ********`
 );
 
 // routes
-// app.use("/files", express.static(path.join(__dirname, "files")));
 app.use("/api/v1", routes);
 app.get("/", (req, res, next) => {
   res.status(200).json({
-    msg: "success",
+    msg: "Server is running",
   });
 });
 
 app.all("*", (req, res, next) => {
-  const err = new Error(`Can't find ${req.originalUrl} on this server!`);
-  err.status = 404;
-  err.statusCode = 404;
-  next(err);
+  return next(
+    createError.NotFound(`Can't find ${req.originalUrl} on this server!`)
+  );
+});
+
+app.use((err, req, res, next) => {
+  // if (err.status === 500) {
+  //   logger.error(err.message);
+  // }
+  res.status(err.status || 500).json({
+    error: {
+      status: err.status,
+      message: err.message,
+    },
+  });
 });
 
 app.listen(process.env.PORT, () => {

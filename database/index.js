@@ -1,3 +1,4 @@
+const { logger } = require("../utils/logger");
 const connection = require("./connection");
 
 const db = connection.db;
@@ -15,7 +16,7 @@ module.exports.database = {
         return true;
       })
       .catch((err) => {
-        console.log(err);
+        logger.error(err);
         return false;
       });
   },
