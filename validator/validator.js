@@ -89,15 +89,17 @@ exports.validate = (method) => {
           .withMessage("ABN is required")
           .isString()
           .withMessage("ABN must be a string"),
-        body("acn").isString().withMessage("ACN must be a string"),
-        body("arbn").isString().withMessage("ARBN must be a string"),
+        body("acn").optional().isString().withMessage("ACN must be a string"),
+        body("arbn").optional().isString().withMessage("ARBN must be a string"),
         body("other_license_number")
           .exists()
           .withMessage("license number is required"),
         body("shareholding_structure")
+          .optional()
           .isInt()
           .withMessage("shareholding must be a number"),
         body("incorporation_number")
+          .optional()
           .isString()
           .withMessage("incorporation number must be a string"),
         body("created_by")
