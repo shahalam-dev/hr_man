@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const models = require("../../database/models").models;
 const createError = require("http-errors");
+const { logger } = require("../../utils/logger");
 
 exports.deleteCompany = async (req, res, next) => {
   return Object.freeze({

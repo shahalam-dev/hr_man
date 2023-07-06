@@ -1,5 +1,6 @@
 const models = require("../../database/models").models;
 const createError = require("http-errors");
+const { logger } = require("../../utils/logger");
 
 exports.fetchCompanyTypes = async (req, res, next) => {
   return Object.freeze({
@@ -8,7 +9,10 @@ exports.fetchCompanyTypes = async (req, res, next) => {
         const companyTypes = await models.CompanyType.findAll();
 
         return {
-          message: "company has been updated",
+          message:
+            companyTypes === 0
+              ? "no company types found"
+              : "fetched company type successfully",
           data: [...companyTypes],
         };
       } catch (error) {

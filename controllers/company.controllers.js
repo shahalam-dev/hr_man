@@ -43,7 +43,7 @@ exports.readCompany = (req, res, next) => {
           await fromServices.ReadCompany(req, res, next)
         ).execute();
 
-        res.status(201).json({
+        res.status(200).json({
           message: result.message,
           data: result.data,
         });
@@ -71,7 +71,7 @@ exports.updateCompany = (req, res, next) => {
           await fromServices.UpdateCompany(req, res, next)
         ).execute();
 
-        res.status(201).json({
+        res.status(200).json({
           message: result.message,
           data: result.data,
         });
@@ -99,7 +99,7 @@ exports.deleteCompany = (req, res, next) => {
           await fromServices.DeleteCompany(req, res, next)
         ).execute();
 
-        res.status(201).json({
+        res.status(202).json({
           message: result.message,
           data: result.data,
         });
@@ -127,7 +127,7 @@ exports.fetchCompanies = (req, res, next) => {
           await fromServices.FetchCompanies(req, res, next)
         ).execute();
 
-        res.status(201).json({
+        res.status(200).json({
           message: result.message,
           data: result.data,
         });
@@ -155,7 +155,7 @@ exports.fetchCompanyTypes = (req, res, next) => {
           await fromServices.FetchCompanyTypes(req, res, next)
         ).execute();
 
-        res.status(201).json({
+        res.status(200).json({
           message: result.message,
           data: result.data,
         });

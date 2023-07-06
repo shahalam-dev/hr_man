@@ -19,7 +19,7 @@ exports.updateCompany = (req, res, next) => {
           incorporation_number,
         } = req.body;
         const generatedId = await uuidv4();
-        const companyData = {
+        const data = {
           legal_name,
           trading_name,
           abn,
@@ -30,11 +30,20 @@ exports.updateCompany = (req, res, next) => {
           incorporation_number,
         };
 
-        const company = await models.Company.upsert({ id: id, ...companyData });
+        const companyData = Object.fromEntries(
+          Object.entries(data).filter(([_, v]) => v != null)
+        );
+
+        const company = await models.Company.update(companyData, {
+          where: { id: id },
+        });
 
         return {
-          message: "company has been updated",
-          data: company[0],
+          message:
+            company[0] === 1
+              ? "company has been updated"
+              : "provided company id is invalid",
+          data: {},
         };
       } catch (error) {
         logger.log("error", {

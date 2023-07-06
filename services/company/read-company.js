@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const models = require("../../database/models").models;
 const createError = require("http-errors");
+const { logger } = require("../../utils/logger");
 
 exports.readCompany = async (req, res, next) => {
   return Object.freeze({
@@ -10,8 +11,10 @@ exports.readCompany = async (req, res, next) => {
         const company = await models.Company.findOne({ where: { id: id } });
 
         return {
-          message: "company has been updated",
-          data: { ...company.dataValues },
+          message: company
+            ? "fetch company details successfully"
+            : "company id is invalid",
+          data: company ? company : {},
         };
       } catch (error) {
         logger.log("error", {

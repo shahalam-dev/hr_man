@@ -113,21 +113,26 @@ exports.validate = (method) => {
           .isUUID()
           .withMessage("invalid param"),
         body("legal_name")
+          .optional()
           .isString()
           .withMessage("company legal name must be a string"),
         body("trading_name")
+          .optional()
           .isString()
           .withMessage("company trading ame must be string"),
-        body("abn").isString().withMessage("ABN must be a string"),
-        body("acn").isString().withMessage("ACN must be a string"),
-        body("arbn").isString().withMessage("ARBN must be a string"),
+        body("abn").optional().isString().withMessage("ABN must be a string"),
+        body("acn").optional().isString().withMessage("ACN must be a string"),
+        body("arbn").optional().isString().withMessage("ARBN must be a string"),
         body("other_license_number")
+          .optional()
           .isString()
           .withMessage("ABN must be a string"),
         body("shareholding_structure")
+          .optional()
           .isInt()
           .withMessage("shareholding must be a number"),
         body("incorporation_number")
+          .optional()
           .isString()
           .withMessage("incorporation number must be a string"),
       ];

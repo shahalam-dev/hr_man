@@ -11,13 +11,12 @@ exports.fetchCompanies = async (req, res, next) => {
         const companies = await models.Company.findAll({
           where: { created_by: id },
         });
-        console.log(
-          "🚀 ~ file: fetch-companies.js:14 ~ execute: ~ companies:",
-          companies
-        );
 
         return {
-          message: "company has been updated",
+          message:
+            companies?.length === 0
+              ? "no company found"
+              : "company fetched successfully",
           data: [...companies],
         };
       } catch (error) {
