@@ -17,7 +17,7 @@
   "production": {
     "username": "shahalam-dev",
     "password": "Eu5VmjJNhvY9",
-    "database": "hr",
+    "database": "hr_man",
     "host": "ep-shrill-water-355234-pooler.us-east-2.aws.neon.tech",
     "dialect": "postgres",
     "logging": false,

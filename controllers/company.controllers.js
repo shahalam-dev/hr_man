@@ -90,7 +90,7 @@ exports.fetchCompanyTypes = async (req, res, next) => {
 
 exports.addCompanyTypes = async (req, res, next) => {
   await tryCatch(async () => {
-    validate(req, next);
+    // validate(req, next);
     const result = await (
       await fromServices.AddCompanyTypes(req, res, next)
     ).execute();

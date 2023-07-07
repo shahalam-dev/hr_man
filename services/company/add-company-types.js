@@ -7,21 +7,25 @@ exports.addCompanyTypes = async (req, res, next) => {
   return Object.freeze({
     execute: async () => {
       try {
-        const { company_types } = req.body;
+        // const { company_types } = req.body;
+        const { company_type, company_type_value } = req.body;
 
-        let companyTypeData = [];
-        company_types.map((type) => {
-          const typeData = {
-            id: uuidv4(),
-            company_type: type.company_type,
-            company_type_value: type.company_type_value,
-          };
-          companyTypeData.push(typeData);
-        });
+        // let companyTypeData = [];
+        // company_types.map((type) => {
+        //   const typeData = {
+        //     id: `${uuidv4()}`,
+        //     company_type: type.company_type,
+        //     company_type_value: type.company_type_value,
+        //   };
+        //   companyTypeData.push(typeData);
+        // });
+        const company_type_data = {
+          id: uuidv4(),
+          company_type,
+          company_type_value,
+        };
 
-        const companyTypes = await models.CompanyType.bulkCreate(
-          companyTypeData
-        );
+        const companyTypes = await models.CompanyType.create(company_type_data);
 
         return {
           message: "company types been added successfully",
@@ -37,3 +41,28 @@ exports.addCompanyTypes = async (req, res, next) => {
     },
   });
 };
+
+// {
+//   "company_type": "sole-trader",
+//   "company_type_value": "Sole Trader"
+// },
+// {
+//   "company_type": "partnership",
+//   "company_type_value": "Partnership"
+// },
+// {
+//   "company_type": "shareholding-company",
+//   "company_type_value": "Shareholding Company"
+// },
+// {
+//   "company_type": "company-limited-by-guarantee",
+//   "company_type_value": "Company Limited By Guarantee"
+// },
+// {
+//   "company_type": "trust",
+//   "company_type_value": "Trust"
+// },
+// {
+//   "company_type": "incorporated-association",
+//   "company_type_value": "Incorporated Association"
+// }
