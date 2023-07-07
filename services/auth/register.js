@@ -23,9 +23,9 @@ exports.register = async (req, res, next) => {
         } = req.body;
         const { full_name, email, password: pass } = req.body;
         const password = await bcrypt.hash(pass, 10);
-        const generatedId = await uuidv4();
+
         const userData = {
-          id: generatedId,
+          id: uuidv4(),
           full_name,
           email,
           password,

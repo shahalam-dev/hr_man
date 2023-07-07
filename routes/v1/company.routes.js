@@ -9,6 +9,7 @@ const {
   deleteCompany,
   fetchCompanies,
   fetchCompanyTypes,
+  addCompanyTypes,
 } = require("../../controllers/company.controllers");
 
 router.post(
@@ -45,6 +46,12 @@ router.get(
   "/fetch_company_types",
   // validator.validate("fetch-company-types"),
   fetchCompanyTypes
+);
+
+router.post(
+  "/add_company_types",
+  // validator.validate("fetch-company-types"),
+  addCompanyTypes
 );
 
 module.exports = router;

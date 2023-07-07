@@ -29,7 +29,7 @@ exports.readCompany = async (req, res, next) => {
       message: result.message,
       data: result.data,
     });
-  });
+  }, next);
 };
 
 exports.updateCompany = async (req, res, next) => {
@@ -43,7 +43,7 @@ exports.updateCompany = async (req, res, next) => {
       message: result.message,
       data: result.data,
     });
-  });
+  }, next);
 };
 
 exports.deleteCompany = async (req, res, next) => {
@@ -57,7 +57,7 @@ exports.deleteCompany = async (req, res, next) => {
       message: result.message,
       data: result.data,
     });
-  });
+  }, next);
 };
 
 exports.fetchCompanies = async (req, res, next) => {
@@ -71,7 +71,7 @@ exports.fetchCompanies = async (req, res, next) => {
       message: result.message,
       data: result.data,
     });
-  });
+  }, next);
 };
 
 exports.fetchCompanyTypes = async (req, res, next) => {
@@ -85,5 +85,19 @@ exports.fetchCompanyTypes = async (req, res, next) => {
       message: result.message,
       data: result.data,
     });
-  });
+  }, next);
+};
+
+exports.addCompanyTypes = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
+    const result = await (
+      await fromServices.AddCompanyTypes(req, res, next)
+    ).execute();
+
+    res.status(200).json({
+      message: result.message,
+      data: result.data,
+    });
+  }, next);
 };

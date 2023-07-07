@@ -16,7 +16,7 @@ exports.verifyEmail = async (req, res, next) => {
           shareholding_structure,
           incorporation_number,
         } = req.body;
-        const generatedId = await uuidv4();
+
         const companyData = {
           legal_name,
           trading_name,

@@ -18,7 +18,7 @@ exports.updateCompany = (req, res, next) => {
           shareholding_structure,
           incorporation_number,
         } = req.body;
-        const generatedId = await uuidv4();
+
         const data = {
           legal_name,
           trading_name,

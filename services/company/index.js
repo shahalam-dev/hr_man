@@ -4,6 +4,7 @@ const fromUpdateCompany = require("./update-company");
 const fromDeleteCompany = require("./delete-company");
 const fromFetchCompanies = require("./fetch-companies");
 const fromFetchCompanyTypes = require("./fetch-company-types");
+const fromAddCompanyTypes = require("./add-company-types");
 
 exports.companyServices = {
   CreateCompany: fromCreateCompany.createCompany,
@@ -12,4 +13,5 @@ exports.companyServices = {
   DeleteCompany: fromDeleteCompany.deleteCompany,
   FetchCompanies: fromFetchCompanies.fetchCompanies,
   FetchCompanyTypes: fromFetchCompanyTypes.fetchCompanyTypes,
+  AddCompanyTypes: fromAddCompanyTypes.addCompanyTypes,
 };
