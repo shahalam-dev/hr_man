@@ -1,172 +1,89 @@
 const fromServices = require("../services/company").companyServices;
-const { validationResult } = require("express-validator");
-const createError = require("http-errors");
 const { tryCatch } = require("../utils/tryCatch");
-const { logger } = require("../utils/logger");
+const { validate } = require("../utils/validate");
 
-exports.createCompany = (req, res, next) => {
-  const run = async () => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const err = errors.mapped();
-        return next(createError.NotAcceptable(err));
-      } else {
-        const result = await (
-          await fromServices.CreateCompany(req, res, next)
-        ).execute();
-        res.status(201).json({
-          message: result.message,
-          data: result.data,
-        });
-      }
-    } catch (error) {
-      logger.log("error", {
-        message: error.message,
-        errorStack: error.stack,
-      });
-      return next(createError.InternalServerError());
-    }
-  };
-  run();
+exports.createCompany = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
+
+    const result = await (
+      await fromServices.CreateCompany(req, res, next)
+    ).execute();
+
+    res.status(201).json({
+      message: result.message,
+      data: result.data,
+    });
+  }, next);
 };
 
-exports.readCompany = (req, res, next) => {
-  const run = async () => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const err = errors.mapped();
-        return next(createError.NotAcceptable(err));
-      } else {
-        const result = await (
-          await fromServices.ReadCompany(req, res, next)
-        ).execute();
+exports.readCompany = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
 
-        res.status(200).json({
-          message: result.message,
-          data: result.data,
-        });
-      }
-    } catch (error) {
-      logger.log("error", {
-        message: error.message,
-        errorStack: error.stack,
-      });
-      return next(createError.InternalServerError());
-    }
-  };
-  run();
+    const result = await (
+      await fromServices.ReadCompany(req, res, next)
+    ).execute();
+
+    res.status(200).json({
+      message: result.message,
+      data: result.data,
+    });
+  });
 };
 
-exports.updateCompany = (req, res, next) => {
-  const run = async () => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const err = errors.mapped();
-        return next(createError.NotAcceptable(err));
-      } else {
-        const result = await (
-          await fromServices.UpdateCompany(req, res, next)
-        ).execute();
+exports.updateCompany = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
+    const result = await (
+      await fromServices.UpdateCompany(req, res, next)
+    ).execute();
 
-        res.status(200).json({
-          message: result.message,
-          data: result.data,
-        });
-      }
-    } catch (error) {
-      logger.log("error", {
-        message: error.message,
-        errorStack: error.stack,
-      });
-      return next(createError.InternalServerError());
-    }
-  };
-  run();
+    res.status(200).json({
+      message: result.message,
+      data: result.data,
+    });
+  });
 };
 
-exports.deleteCompany = (req, res, next) => {
-  const run = async () => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const err = errors.mapped();
-        return next(createError.NotAcceptable(err));
-      } else {
-        const result = await (
-          await fromServices.DeleteCompany(req, res, next)
-        ).execute();
+exports.deleteCompany = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
+    const result = await (
+      await fromServices.DeleteCompany(req, res, next)
+    ).execute();
 
-        res.status(202).json({
-          message: result.message,
-          data: result.data,
-        });
-      }
-    } catch (error) {
-      logger.log("error", {
-        message: error.message,
-        errorStack: error.stack,
-      });
-      return next(createError.InternalServerError());
-    }
-  };
-  run();
+    res.status(202).json({
+      message: result.message,
+      data: result.data,
+    });
+  });
 };
 
-exports.fetchCompanies = (req, res, next) => {
-  const run = async () => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const err = errors.mapped();
-        return next(createError.NotAcceptable(err));
-      } else {
-        const result = await (
-          await fromServices.FetchCompanies(req, res, next)
-        ).execute();
+exports.fetchCompanies = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
+    const result = await (
+      await fromServices.FetchCompanies(req, res, next)
+    ).execute();
 
-        res.status(200).json({
-          message: result.message,
-          data: result.data,
-        });
-      }
-    } catch (error) {
-      logger.log("error", {
-        message: error.message,
-        errorStack: error.stack,
-      });
-      return next(createError.InternalServerError());
-    }
-  };
-  run();
+    res.status(200).json({
+      message: result.message,
+      data: result.data,
+    });
+  });
 };
 
-exports.fetchCompanyTypes = (req, res, next) => {
-  const run = async () => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const err = errors.mapped();
-        return next(createError.NotAcceptable(err));
-      } else {
-        const result = await (
-          await fromServices.FetchCompanyTypes(req, res, next)
-        ).execute();
+exports.fetchCompanyTypes = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
+    const result = await (
+      await fromServices.FetchCompanyTypes(req, res, next)
+    ).execute();
 
-        res.status(200).json({
-          message: result.message,
-          data: result.data,
-        });
-      }
-    } catch (error) {
-      logger.log("error", {
-        message: error.message,
-        errorStack: error.stack,
-      });
-      return next(createError.InternalServerError());
-    }
-  };
-  run();
+    res.status(200).json({
+      message: result.message,
+      data: result.data,
+    });
+  });
 };

@@ -12,93 +12,45 @@ const decodeJWT = require("../utils/decode-jwt").decodeJWT;
 const sendMail = require("../utils/send-mail").sendMail;
 const { validationResult } = require("express-validator");
 const { logger } = require("../utils/logger");
+const { tryCatch } = require("../utils/tryCatch");
+const { validate } = require("../utils/validate");
 
-const signUp = (req, res, next) => {
-  const run = async () => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const err = errors.mapped();
-        return next(createError.NotAcceptable(err));
-      } else {
-        const result = (await fromServices.Register(req, res, next)).execute();
-        res.status(201).json({
-          message: result.message,
-          data: result.data,
-        });
-      }
-    } catch (error) {
-      logger.log("error", {
-        message: error.message,
-        errorStack: error.stack,
-      });
-      next(error);
-    }
-  };
-  run();
+exports.signUp = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
+
+    const result = await (
+      await fromServices.Register(req, res, next)
+    ).execute();
+
+    res.status(201).json({
+      message: result.message,
+      data: result.data,
+    });
+  }, next);
 };
 
-const logIn = (req, res, next) => {
-  const { email, password: pass } = req.body;
-  const run = async () => {
-    try {
-      const user = await models.Auth.findOne({ where: { email } });
-      const isValidPassword = await bcrypt.compare(pass, user.password);
-      const { id, role, verified, full_name } = user;
-      if (user) {
-        if (verified === "true") {
-          if (isValidPassword) {
-            const token = jwt.sign(
-              {
-                exp: Math.floor(Date.now() / 1000) + 60 * 60,
-                data: {
-                  id,
-                  role,
-                },
-              },
-              jwtSecret
-            );
-            res.cookie("auth", token, {
-              maxAge: 1000 * 60 * 60,
-              httpOnly: true,
-            });
-            const userInfo = {
-              user_id: user.id,
-              name: user.full_name || "",
-            };
+exports.logIn = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
 
-            return res.status(200).json({
-              message: "success",
-              user: userInfo,
-            });
-          } else {
-            return res.status(403).json({
-              message: "Incorrect password",
-            });
-          }
-        } else {
-          return res.status(403).json({
-            message: "Email is not verified",
-          });
-        }
-      } else {
-        return res.status(404).json({
-          message: "User not found",
-        });
-      }
-      const isValidPass = await bcrypt.compare(pass, user.password);
-    } catch (error) {
-      logger.log("error", {
-        message: error.message,
-        errorStack: error.stack,
+    const result = await (await fromServices.Login(req, res, next)).execute();
+
+    const { data, status, token } = result;
+    if (token) {
+      res.cookie("auth", token, {
+        maxAge: 1000 * 60 * 60,
+        httpOnly: true,
       });
-      return next(error);
     }
-  };
-  run();
+    res.status(status).json({
+      message: result.message,
+      data: data,
+    });
+  }, next);
 };
 
-const forgotPassword = (req, res, next) => {
+exports.forgotPassword = (req, res, next) => {
   // const { email: reqEmail } = req.body;
   const { email } = req.params;
 
@@ -136,7 +88,7 @@ const forgotPassword = (req, res, next) => {
   run();
 };
 
-const resetPassword = (req, res, next) => {
+exports.resetPassword = (req, res, next) => {
   const { password: reqPassword, token: reqToken } = req.body;
 
   const run = async () => {
@@ -176,7 +128,7 @@ const resetPassword = (req, res, next) => {
   run();
 };
 
-const verifyEmail = (req, res, next) => {
+exports.verifyEmail = (req, res, next) => {
   const { token } = req.params;
 
   const run = async () => {
@@ -224,7 +176,7 @@ const verifyEmail = (req, res, next) => {
   run();
 };
 
-const logOut = (req, res, next) => {
+exports.logOut = (req, res, next) => {
   const run = async () => {
     try {
       res.clearCookie("auth");
@@ -242,10 +194,3 @@ const logOut = (req, res, next) => {
   };
   run();
 };
-
-exports.signUp = signUp;
-exports.logIn = logIn;
-exports.forgotPassword = forgotPassword;
-exports.resetPassword = resetPassword;
-exports.verifyEmail = verifyEmail;
-exports.logOut = logOut;

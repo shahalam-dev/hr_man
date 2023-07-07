@@ -4,6 +4,8 @@ const createError = require("http-errors");
 const bcrypt = require("bcrypt");
 const { where } = require("sequelize");
 const { logger } = require("../../utils/logger");
+const { otpLink } = require("../../utils/otp-link");
+const { sendMail } = require("../../utils/send-mail");
 
 exports.register = async (req, res, next) => {
   return Object.freeze({
@@ -35,8 +37,7 @@ exports.register = async (req, res, next) => {
         const isExist = await models.Auth.findOne({ where: { email: email } });
         if (!isExist) {
           const user = await models.Auth.create(userData);
-
-          const { token, generateLink } = await generateOtpLink(
+          const { token, generateLink } = await otpLink(
             email,
             `${process.env.SERVER_URL}/verify_email/`
           );
@@ -47,7 +48,9 @@ exports.register = async (req, res, next) => {
         }
 
         return {
-          message: "company has been updated",
+          message: isExist
+            ? "this email already registered"
+            : "user has been created",
           data: {},
         };
       } catch (error) {

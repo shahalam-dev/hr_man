@@ -1,7 +1,14 @@
-exports.tryCatch = (controller) => async (req, res, next) => {
+const { logger } = require("../utils/logger");
+const createError = require("http-errors");
+
+exports.tryCatch = async (cb, next) => {
   try {
-    await controller(req, res);
+    await cb();
   } catch (error) {
-    return next(error);
+    logger.log("error", {
+      message: error.message,
+      errorStack: error.stack,
+    });
+    return next(createError.InternalServerError());
   }
 };
