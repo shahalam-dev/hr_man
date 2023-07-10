@@ -30,7 +30,7 @@ exports.register = async (req, res, next) => {
           email,
           password,
           verified: "false",
-          role: 1001,
+          // role: 1001,
           account_status: "active",
         };
 

@@ -1,0 +1,355 @@
+{
+	"info": {
+		"_postman_id": "d1a8f915-ffab-4d40-a004-f776f26aca94",
+		"name": "application-micor-tech",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "23874197"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "sign up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\": \"shahalam sharif\",\n    \"email\": \"shahaham@gmail.com\",\n    \"password\": \"Sharif@123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/register"
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"shahaham@gmail.com\",\n    \"password\": \"Sharif@123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/login"
+					},
+					"response": []
+				},
+				{
+					"name": "forget password",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/forgot_password/:email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"forgot_password",
+								":email"
+							],
+							"variable": [
+								{
+									"key": "email",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "change password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{   \n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODg4MTM0ODgsImRhdGEiOnsiZW1haWwiOiJzc2hhaGFsYW0uZGV2KzEyMzQ1QGdtYWlsLmNvbSIsInNpeERpZ2l0T1RQIjoxMjg2NDF9LCJpYXQiOjE2ODg4MTI4ODh9.xlo79xtWbz3c-Shmeo4tixaxiP-fg40pkoOfTZOGc8Q\",\n    \"password\" : \"Test@12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/reset_password"
+					},
+					"response": []
+				},
+				{
+					"name": "verify email",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"followRedirects": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/verify_email/:token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"verify_email",
+								":token"
+							],
+							"variable": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODg5NTg1NDUsImRhdGEiOnsiZW1haWwiOiJzc2hhaGFsYW0uZGV2K3NkZmRzZmZAZ21haWwuY29tIiwic2l4RGlnaXRPVFAiOjkwMTAwOH0sImlhdCI6MTY4ODk1Nzk0NX0.sNNfUomZWda5o1Nc8ntTiDYQUG3IERQbjjlgFVpiE40"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/logout"
+					},
+					"response": []
+				},
+				{
+					"name": "resend verification email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/resend_verification_email/:email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"resend_verification_email",
+								":email"
+							],
+							"variable": [
+								{
+									"key": "email",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "company",
+			"item": [
+				{
+					"name": "create company",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n          \"company_type\": \"sole-trader\",\n          \"company_type_ref\": \"a74c1d90-3b62-49e3-93ff-7090145b98d2\",\n          \"legal_name\": \"lllll\",\n          \"trading_name\": \"uy7yhu\",\n          \"abn\": \"dsfasd\",\n          \"acn\": \"asdfasd\",\n          \"arbn\": \"asdfadsf\",\n          \"other_license_number\": \"asdfadf\",\n          \"shareholding_structure\": 23,\n          \"incorporation_number\": \"sdfasdfd\",\n          \"created_by\": \"a74c1d90-3b62-49e3-93ff-7090145b98d2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/create_company"
+					},
+					"response": []
+				},
+				{
+					"name": "update company",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"legal_name\": \"shahalamkk67\",\n    \"trading_name\": \"sdfasdfsad\",\n    // \"abn\": null,\n    // \"acn\": \"asdfasd\",\n    \"arbn\": \"asdfadsf\",\n    \"other_license_number\": \"asdfadf\",\n    \"shareholding_structure\": 23\n    // \"incorporation_number\": \"sdfasdfd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/update_company/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"update_company",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null,
+									"description": "Company Id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "read company",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/read_company/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"read_company",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null,
+									"description": "Company id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete company",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/delete_company/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"delete_company",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null,
+									"description": "company id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch all companies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/fetch_companies/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"fetch_companies",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null,
+									"description": "company owner id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch company types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/fetch_company_types"
+					},
+					"response": []
+				},
+				{
+					"name": "add company types",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"company_type\": \"incorporated-association\",\n  \"company_type_value\": \"Incorporated Association\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/add_company_types"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8800/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "base_url",
+			"value": "https://hr-management-1wt7.onrender.com/api/v1",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}

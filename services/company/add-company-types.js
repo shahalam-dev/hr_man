@@ -9,23 +9,25 @@ exports.addCompanyTypes = async (req, res, next) => {
       try {
         // const { company_types } = req.body;
         const { company_type, company_type_value } = req.body;
+        let companyTypes = {};
 
-        // let companyTypeData = [];
-        // company_types.map((type) => {
-        //   const typeData = {
-        //     id: `${uuidv4()}`,
-        //     company_type: type.company_type,
-        //     company_type_value: type.company_type_value,
-        //   };
-        //   companyTypeData.push(typeData);
-        // });
-        const company_type_data = {
-          id: uuidv4(),
-          company_type,
-          company_type_value,
-        };
+        const isExist = await models.CompanyType.findOne({
+          where: {
+            company_type: company_type,
+          },
+        });
 
-        const companyTypes = await models.CompanyType.create(company_type_data);
+        if (isExist) {
+          return next(createError.Conflict(`"${company_type}" already exist`));
+        } else {
+          const company_type_data = {
+            id: uuidv4(),
+            company_type,
+            company_type_value,
+          };
+
+          companyTypes = await models.CompanyType.create(company_type_data);
+        }
 
         return {
           message: "company types been added successfully",

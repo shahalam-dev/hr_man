@@ -23,11 +23,17 @@ exports.validate = (method) => {
     case "login": {
       return [
         body("email")
-          .isEmail()
-          .withMessage("invalid email")
           .exists()
-          .whitelist("email is required"),
-        body("password").exists().withMessage("password is required"),
+          .withMessage("email is required")
+          .isEmail()
+          .withMessage("Invalid email"),
+        body("password")
+          .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>])(?!.*\s).{8,}$/
+          )
+          .withMessage(
+            "Password must minimum combination of 8 character one uppercase one lowercase and one character."
+          ),
       ];
     }
     case "forgot-pass": {
@@ -46,13 +52,17 @@ exports.validate = (method) => {
       ];
     }
     case "verify-email": {
-      return [param("token").exists().whitelist("token parameter is required")];
+      return [
+        param("token").exists().withMessage("token parameter is required"),
+      ];
     }
     case "email-verification-link": {
-      return [param("email").exists().whitelist("email parameter is required")];
+      return [
+        param("email").exists().withMessage("email parameter is required"),
+      ];
     }
     case "logout": {
-      return [cookie("auth").exists().whitelist("auth cookie not found")];
+      return [cookie("auth").exists().withMessage("auth cookie not found")];
     }
     // auth request validation ended
     case "create-company": {
@@ -165,6 +175,17 @@ exports.validate = (method) => {
           .isUUID()
           .withMessage("invalid param"),
       ];
+    }
+    case "add-company-types": {
+      return [
+        body("company_type").exists().withMessage("company type is required"),
+        body("company_type_value")
+          .exists()
+          .withMessage("company type is required"),
+      ];
+    }
+    case "fetch-company-types": {
+      return [];
     }
   }
 };

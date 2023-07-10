@@ -1,12 +1,12 @@
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv").config;
 const Mailgen = require("mailgen");
-exports.sendMail = (data) => {
+exports.sendMail = async (data) => {
   const config = {
     service: "gmail",
     auth: {
-      user: "shahalamsharif2015@gmail.com",
-      pass: "gljdnvygtwdnaudg",
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_APP_PASS,
     },
   };
 
@@ -38,7 +38,7 @@ exports.sendMail = (data) => {
   const mail = MailGenerator.generate(response);
 
   const message = {
-    from: "shahalamsharif2015@gmail.com",
+    from: process.env.EMAIL,
     to: data.email,
     subject: "testing",
     html: mail,

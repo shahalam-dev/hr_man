@@ -36,161 +36,95 @@ exports.logIn = async (req, res, next) => {
 
     const result = await (await fromServices.Login(req, res, next)).execute();
 
-    const { data, status, token } = result;
+    const { data, statusCode, token } = result;
+
     if (token) {
       res.cookie("auth", token, {
         maxAge: 1000 * 60 * 60,
         httpOnly: true,
       });
     }
-    res.status(status).json({
+    res.status(statusCode).json({
       message: result.message,
       data: data,
     });
   }, next);
 };
 
-exports.forgotPassword = (req, res, next) => {
-  // const { email: reqEmail } = req.body;
-  const { email } = req.params;
+exports.verifyEmail = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
 
-  const run = async () => {
-    try {
-      const user = await models.Auth.findOne({
-        where: { email: email },
-      });
+    const result = await (
+      await fromServices.VerifyEmail(req, res, next)
+    ).execute();
 
-      if (!user) {
-        return res.status(404).json({
-          message: "user not found",
-        });
-      } else {
-        const { token, generateLink } = await generateOtpLink(
-          email,
-          `${process.env.CLIENT_URL}/auth/resetPassword/`
-        );
-        const userMail = user.email;
-        user.token = token;
-        await user.save();
-        await sendMail({ email: userMail, generateLink });
-        return res.status(200).json({
-          message: "success",
-        });
-      }
-    } catch (error) {
-      logger.log("error", {
-        message: error.message,
-        errorStack: error.stack,
-      });
-      return next(error);
-    }
-  };
-  run();
+    const { redirectUrl } = result;
+
+    res.redirect(redirectUrl);
+    // res.status(status).json({
+    //   message: result.message,
+    //   data: data,
+    // });
+  }, next);
 };
 
-exports.resetPassword = (req, res, next) => {
-  const { password: reqPassword, token: reqToken } = req.body;
+exports.resendVerifyEmail = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
 
-  const run = async () => {
-    try {
-      const { email: userEmail, sixDigitOTP } = await decodeJWT(reqToken);
-      const user = await models.Auth.findOne({
-        where: { email: userEmail },
-      });
-      if (!user) {
-        return res.status(404).json({
-          message: "user not found",
-        });
-      } else {
-        const { token } = user;
-        const { sixDigitOTP: savedOTP } = await decodeJWT(token);
-        if (sixDigitOTP === savedOTP) {
-          const pass = await bcrypt.hash(reqPassword, 10);
-          user.password = pass;
-          await user.save();
-          return res.status(200).json({
-            message: "success",
-          });
-        }
-      }
-    } catch (error) {
-      if (error.name === "TokenExpiredError") {
-        return res.status(503).send("Your session has expired");
-      } else {
-        logger.log("error", {
-          message: error.message,
-          errorStack: error.stack,
-        });
-        return next(error);
-      }
-    }
-  };
-  run();
+    const result = await (
+      await fromServices.GetVerifyLink(req, res, next)
+    ).execute();
+    const { statusCode, message, data } = result;
+    res.status(statusCode).json({
+      message: message,
+      data: data || {},
+    });
+  }, next);
 };
 
-exports.verifyEmail = (req, res, next) => {
-  const { token } = req.params;
+exports.forgotPassword = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
 
-  const run = async () => {
-    try {
-      const { email: userEmail, sixDigitOTP } = await decodeJWT(token);
+    const result = await (
+      await fromServices.ForgotPass(req, res, next)
+    ).execute();
 
-      const user = await models.Auth.findOne({
-        where: { email: userEmail },
-      });
+    const { data, statusCode, token } = result;
 
-      if (!user) {
-        return res.status(404).json({
-          message: "user not found",
-        });
-      } else {
-        const { token } = user;
-        const { sixDigitOTP: savedOTP } = jwt.verify(token, jwtSecret).data;
-        if (savedOTP === sixDigitOTP) {
-          user.verified = "true";
-          await user.save();
-          // res.status(200).json({
-          //   statusText: "email verification successful",
-          // });
-          res.redirect(
-            `${process.env.CLIENT_URL}/auth/email_verify_confirm/${user.email}`
-          );
-        } else {
-          return res.status(401).json({
-            message: "invalid token",
-          });
-        }
-      }
-    } catch (error) {
-      if (error.name === "TokenExpiredError") {
-        return res.status(503).send("Your session has expired");
-      } else {
-        logger.log("error", {
-          message: error.message,
-          errorStack: error.stack,
-        });
-        return next(error);
-      }
-    }
-  };
-  run();
+    res.status(statusCode).json({
+      message: result.message,
+      data: data,
+    });
+  }, next);
 };
 
-exports.logOut = (req, res, next) => {
-  const run = async () => {
-    try {
-      res.clearCookie("auth");
-      res.status(200).json({
-        statusText: "logout successful",
-      });
-      res.redirect(`${process.env.CLIENT_URL}/auth/login`);
-    } catch (error) {
-      logger.log("error", {
-        message: error.message,
-        errorStack: error.stack,
-      });
-      return next(error);
-    }
-  };
-  run();
+exports.resetPassword = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
+
+    const result = await (
+      await fromServices.ResetPass(req, res, next)
+    ).execute();
+
+    const { data, statusCode } = result;
+
+    res.status(statusCode).json({
+      message: result.message,
+      data: data || {},
+    });
+  }, next);
+};
+
+exports.logOut = async (req, res, next) => {
+  await tryCatch(async () => {
+    validate(req, next);
+
+    res.cookie("auth", "");
+    res.status(200).json({
+      statusText: "logout successful",
+    });
+  }, next);
 };

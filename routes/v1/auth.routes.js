@@ -11,13 +11,37 @@ const {
   resetPassword,
   verifyEmail,
   logOut,
+  resendVerifyEmail,
 } = require("../../controllers/auth.controllers");
+const { auth } = require("../../middlewares/auth.middleware");
 
 router.post("/register", validator.validate("register"), signUp);
-router.post("/login", logIn);
-router.get("/verify_email/:token", verifyEmail);
-router.get("/forgot_password/:email", forgotPassword);
-router.post("/reset_password", resetPassword);
-router.get("/logout", logOut);
+router.post("/login", validator.validate("login"), logIn);
+router.get(
+  "/verify_email/:token",
+  validator.validate("verify-email"),
+  verifyEmail
+);
+router.get(
+  "/forgot_password/:email",
+  // validator.validate("forgot-pass"),
+  forgotPassword
+);
+
+router.get(
+  "/resend_verification_email/:email",
+  // validator.validate("forgot-pass"),
+  resendVerifyEmail
+);
+router.post(
+  "/reset_password",
+  // validator.validate("register"),
+  resetPassword
+);
+router.get(
+  "/logout",
+  // validator.validate("logout"),
+  logOut
+);
 
 module.exports = router;

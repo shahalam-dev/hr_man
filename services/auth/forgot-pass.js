@@ -1,37 +1,42 @@
 const { v4: uuidv4 } = require("uuid");
 const models = require("../../database/models").models;
 const createError = require("http-errors");
+const { logger } = require("../../utils/logger");
+const { otpLink } = require("../../utils/otp-link");
+const { sendMail } = require("../../utils/send-mail");
 
 exports.forgotPass = async (req, res, next) => {
   return Object.freeze({
     execute: async () => {
       try {
-        const {
-          legal_name,
-          trading_name,
-          abn,
-          acn,
-          arbn,
-          other_license_number,
-          shareholding_structure,
-          incorporation_number,
-        } = req.body;
-        const companyData = {
-          legal_name,
-          trading_name,
-          abn,
-          acn,
-          arbn,
-          other_license_number,
-          shareholding_structure,
-          incorporation_number,
+        const { email } = req.params;
+        const resultData = {
+          message: "",
+          statusCode: null,
         };
+        const user = await models.Auth.findOne({ where: { email } });
 
-        const company = await models.Company.create(companyData);
+        if (user.email === email) {
+          // generate verification token and send to the mail id of that account
+          const { token, generateLink } = await otpLink(
+            email,
+            `${process.env.SERVER_URL}/auth/resetPassword/`
+          );
+
+          user.token = token;
+          await user.save();
+          await sendMail({ email, generateLink });
+          resultData.message = "email verification link has been sent";
+          resultData.statusCode = 200;
+        } else {
+          resultData.message = "user not found";
+          resultData.statusCode = 404;
+        }
 
         return {
-          message: "company has been updated",
+          message: resultData.message,
           data: {},
+          statusCode: resultData.statusCode,
         };
       } catch (error) {
         logger.log("error", {

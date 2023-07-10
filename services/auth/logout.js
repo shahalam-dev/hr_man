@@ -2,26 +2,14 @@ const { v4: uuidv4 } = require("uuid");
 const models = require("../../database/models").models;
 const createError = require("http-errors");
 const { logger } = require("../../utils/logger");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const jwtSecret = process.env.JWT_SECRET;
 
-exports.fetchCompanies = async (req, res, next) => {
+exports.logout = async (req, res, next) => {
   return Object.freeze({
     execute: async () => {
       try {
-        const { id } = req.params;
-        let companies = [];
-        if (id) {
-          companies = await models.Company.findAll({
-            where: { created_by: id },
-          });
-        }
-
-        return {
-          message:
-            companies?.length === 0
-              ? "no company found"
-              : "company fetched successfully",
-          data: [...companies],
-        };
       } catch (error) {
         logger.log("error", {
           message: error.message,

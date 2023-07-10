@@ -11,6 +11,7 @@ module.exports = {
       },
       company_type: {
         type: Sequelize.STRING,
+        unique: true,
       },
       company_type_value: {
         type: Sequelize.STRING,

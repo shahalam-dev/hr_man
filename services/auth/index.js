@@ -11,4 +11,5 @@ exports.authServices = {
   VerifyEmail: fromVerifyEmail.verifyEmail,
   GetVerifyLink: fromGetVerifyLink.getVerifyLink,
   ForgotPass: fromForgotPass.forgotPass,
+  ResetPass: fromResetPass.resetPass,
 };

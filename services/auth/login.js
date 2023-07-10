@@ -17,72 +17,47 @@ exports.login = async (req, res, next) => {
           token: null,
           userInfo: null,
           message: "",
-          status: null,
+          statusCode: null,
         };
 
         if (user) {
           const { id, role, verified, full_name, password } = user;
           const isValidPassword = await bcrypt.compare(pass, password);
 
-          if (isValidPassword) {
-            resultData.token = jwt.sign(
-              {
-                exp: Math.floor(Date.now() / 1000) + 60 * 60,
-                data: {
-                  id,
-                  role,
+          if (verified === "true") {
+            if (isValidPassword) {
+              resultData.token = jwt.sign(
+                {
+                  exp: Math.floor(Date.now() / 1000) + 60 * 60,
+                  data: {
+                    id,
+                    // role,
+                  },
                 },
-              },
-              jwtSecret
-            );
+                jwtSecret
+              );
 
-            resultData.userInfo = {
-              user_id: id,
-              name: full_name,
-            };
+              resultData.userInfo = {
+                user_id: id,
+                name: full_name,
+              };
 
-            resultData.message = "user logged in successfully";
-            resultData.status = 200;
+              resultData.message = "user logged in successfully";
+              resultData.statusCode = 200;
+            } else {
+              resultData.userInfo = null;
+              resultData.message = "password is incorrect";
+              resultData.statusCode = 403;
+            }
           } else {
             resultData.userInfo = null;
-            resultData.message = "password is incorrect";
-            resultData.status = 403;
+            resultData.message = "email is not verified";
+            resultData.statusCode = 403;
           }
-
-          // if (verified === "") {
-          //   if (isValidPassword) {
-          //     resultData.token = jwt.sign(
-          //       {
-          //         exp: Math.floor(Date.now() / 1000) + 60 * 60,
-          //         data: {
-          //           id,
-          //           role,
-          //         },
-          //       },
-          //       jwtSecret
-          //     );
-
-          //     resultData.userInfo = {
-          //       user_id: id,
-          //       name: full_name,
-          //     };
-
-          //     resultData.message = "user logged in successfully";
-          //     resultData.status = 200;
-          //   } else {
-          //     resultData.userInfo = null;
-          //     resultData.message = "password is incorrect";
-          //     resultData.status = 403;
-          //   }
-          // } else {
-          //   resultData.userInfo = null;
-          //   resultData.message = "email is not verified";
-          //   resultData.status = 403;
-          // }
         } else {
           resultData.userInfo = null;
           resultData.message = "user not found";
-          resultData.status = 404;
+          resultData.statusCode = 404;
         }
 
         return {
@@ -91,7 +66,8 @@ exports.login = async (req, res, next) => {
             resultData.userInfo && resultData.token
               ? { token: resultData.token, userInfo: resultData.userInfo }
               : {},
-          status: resultData.status,
+          statusCode: resultData.statusCode,
+          token: resultData.token ? resultData.token : null,
         };
       } catch (error) {
         logger.log("error", {

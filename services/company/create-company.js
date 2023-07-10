@@ -20,6 +20,7 @@ exports.createCompany = async (req, res, next) => {
           incorporation_number,
           created_by,
         } = req.body;
+        const userId = req.userId;
 
         const companyData = {
           id: uuidv4(),
