@@ -23,7 +23,7 @@ exports.signUp = async (req, res, next) => {
       await fromServices.Register(req, res, next)
     ).execute();
 
-    res.status(201).json({
+    res.status(result?.statusCode || 500).json({
       message: result.message,
       data: result.data,
     });

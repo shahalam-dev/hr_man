@@ -33,6 +33,11 @@ exports.register = async (req, res, next) => {
           // role: 1001,
           account_status: "active",
         };
+        const resultData = {
+          message: "",
+          statusCode: null,
+          data: {},
+        };
 
         const isExist = await models.Auth.findOne({ where: { email: email } });
         if (!isExist) {
@@ -45,12 +50,17 @@ exports.register = async (req, res, next) => {
           user.token = token;
           await user.save();
           await sendMail({ email, generateLink });
+
+          resultData.message = "user has been created";
+          resultData.statusCode = 200;
+        } else {
+          resultData.message = "this email already registered";
+          resultData.statusCode = 409;
         }
 
         return {
-          message: isExist
-            ? "this email already registered"
-            : "user has been created",
+          message: resultData.message,
+          statusCode: resultData.statusCode,
           data: {},
         };
       } catch (error) {
